@@ -1,0 +1,11 @@
+repo_name,team,priority,notes
+my-api,backend,critical,Core API service
+my-frontend,frontend,high,Main web application
+my-mobile-app,mobile,high,Mobile application
+my-database,backend,critical,Database service
+my-auth-service,security,critical,Authentication microservice
+my-monitoring,devops,medium,Monitoring and alerting
+my-analytics,data,medium,Analytics pipeline
+my-docs,documentation,low,Documentation site
+my-tools,devops,low,Internal development tools
+my-legacy-app,legacy,low,Legacy application (maintenance mode)

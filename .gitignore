@@ -1,0 +1,85 @@
+# Repository configuration (may contain sensitive repo names)
+repos.csv
+
+# Generated reports (may contain internal data)
+*-report.csv
+cicd-report.csv
+patchstack-cicd-report.csv
+
+# Cloned repositories directory (contains private code)
+repos/
+patchstack-repos/
+repositories/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Config files that might contain secrets
+config.json
+.env
+.env.local
+.env.production
+.env.development
+
+# SSH keys
+*.pem
+*.key
+id_rsa*
+id_ed25519*

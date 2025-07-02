@@ -1,6 +1,6 @@
-# CI/CD Documentation Generator
+# CI/CD Detector
 
-A comprehensive tool for analyzing and documenting CI/CD configurations across multiple git repositories. Creates a single source of truth for build and deployment mechanisms to help DevOps, security, and development teams understand their infrastructure landscape.
+A comprehensive tool for detecting and documenting CI/CD configurations across multiple git repositories. Creates a single source of truth for build and deployment mechanisms to help DevOps, security, and development teams understand their infrastructure landscape.
 
 ## Features
 
@@ -41,10 +41,10 @@ my-tool,devops,medium,Internal tooling
 
 ```bash
 # Generate the CI/CD documentation
-python3 cicd-analyzer.py
+python3 cicd-detector.py
 
 # With custom options
-python3 cicd-analyzer.py --repos-dir my-repos --output my-report.csv
+python3 cicd-detector.py --repos-dir my-repos --output my-report.csv
 ```
 
 ### 4. Review Results
@@ -82,8 +82,8 @@ The generated report includes these columns:
 ### Clone and Setup
 
 ```bash
-git clone https://github.com/yourusername/cicd-analyzer.git
-cd cicd-analyzer
+git clone https://github.com/yourusername/cicd-detector.git
+cd cicd-detector
 chmod +x *.sh *.py
 ```
 
@@ -116,10 +116,10 @@ Options:
   --help              Show help message
 ```
 
-#### Analyzer Options
+#### Detector Options
 
 ```bash
-python3 cicd-analyzer.py [OPTIONS]
+python3 cicd-detector.py [OPTIONS]
 
 Options:
   --repos-dir DIR     Repository directory (default: repos)
@@ -237,8 +237,10 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Changelog
 
-### v1.0.0
-- Initial release with multi-platform support
-- CSV-based configuration
-- Comprehensive CI/CD tool detection
-- Team and ownership tracking
+### v1.0.0 - Initial Release
+- Multi-platform support (GitHub, Bitbucket, GitLab)
+- CSV-based repository configuration
+- Comprehensive CI/CD tool detection (Pipelines, Actions, Jenkins, etc.)
+- Team and priority-based analytics
+- Zero external dependencies
+- Open source with comprehensive documentation

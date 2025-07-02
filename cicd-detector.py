@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-CI/CD Documentation Generator
-Analyzes git repositories for CI/CD configurations without external dependencies
+CI/CD Detector
+Detects and analyzes CI/CD configurations across git repositories without external dependencies
 """
 
 import os
@@ -417,7 +417,7 @@ class CICDAnalyzer:
 
 def main():
     """Main execution function."""
-    parser = argparse.ArgumentParser(description='CI/CD Documentation Generator for Git Repositories')
+    parser = argparse.ArgumentParser(description='CI/CD Detector - Analyze CI/CD configurations across Git repositories')
     parser.add_argument('--repos-dir', default='repos', help='Directory containing cloned repositories (default: repos)')
     parser.add_argument('--repos-csv', default='repos.csv', help='CSV file containing repository list (default: repos.csv)')
     parser.add_argument('--output', default='cicd-report.csv', help='Output CSV file (default: cicd-report.csv)')
@@ -433,7 +433,7 @@ def main():
         org_name=args.org_name
     )
     
-    print("🔍 CI/CD Documentation Generator")
+    print("🔍 CI/CD Detector")
     print("=" * 50)
     
     # Check if repos directory exists

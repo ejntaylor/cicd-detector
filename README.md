@@ -82,7 +82,7 @@ The generated report includes these columns:
 ### Clone and Setup
 
 ```bash
-git clone https://github.com/yourusername/cicd-detector.git
+git clone https://github.com/ejntaylor/cicd-detector
 cd cicd-detector
 chmod +x *.sh *.py
 ```

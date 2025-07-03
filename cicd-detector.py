@@ -10,15 +10,18 @@ import re
 import argparse
 from pathlib import Path
 from typing import Dict, List, Tuple
+from test_detector import TestSuiteDetector
 
 
 class CICDAnalyzer:
-    def __init__(self, repos_dir: str = "repos", repos_csv: str = "repos.csv", git_host: str = "bitbucket.org", org_name: str = None):
+    def __init__(self, repos_dir: str = "repos", repos_csv: str = "repos.csv", git_host: str = "bitbucket.org", org_name: str = None, run_tests: bool = False):
         self.repos_dir = Path(repos_dir)
         self.repos_csv = repos_csv
         self.git_host = git_host
         self.org_name = org_name
+        self.run_tests = run_tests
         self.repositories = self.load_repositories()
+        self.test_detector = TestSuiteDetector() if run_tests else None
         
     def load_repositories(self) -> List[Dict]:
         """Load repository list from CSV file."""
@@ -293,13 +296,30 @@ class CICDAnalyzer:
                 "cd_tool": "not_found", 
                 "version_plan": "not_found",
                 "contact": "not_found",
-                "notes": "Repository directory not found"
+                "notes": "Repository directory not found",
+                "test_framework": None,
+                "test_coverage": 0.0
             }
             
         ci_tool, version_plan = self.detect_ci_tool(repo_path)
         cd_tool = self.detect_cd_tool(repo_path)
         contact = self.get_ownership_info(repo_path)
         notes = self.get_additional_notes(repo_path)
+        
+        # Test analysis
+        test_framework = None
+        test_coverage = 0.0
+        
+        if self.run_tests and self.test_detector:
+            print(f"    Running tests for {repo_name}...")
+            test_result = self.test_detector.analyze_repository_tests(repo_path)
+            test_framework = test_result['test_framework']
+            test_coverage = test_result['coverage_percent']
+            
+            if test_result['success']:
+                print(f"    ✅ {test_framework}: {test_result['test_count']} tests, {test_coverage:.1f}% coverage")
+            elif test_result['error']:
+                print(f"    ⚠️  {test_framework or 'Tests'}: {test_result['error'][:50]}...")
         
         return {
             "repo_name": repo_name,
@@ -309,7 +329,9 @@ class CICDAnalyzer:
             "cd_tool": cd_tool,
             "version_plan": version_plan,
             "contact": contact,
-            "notes": notes
+            "notes": notes,
+            "test_framework": test_framework,
+            "test_coverage": test_coverage
         }
         
     def generate_report(self) -> List[Dict]:
@@ -339,7 +361,7 @@ class CICDAnalyzer:
         
     def save_report(self, results: List[Dict], output_file: str = "cicd-report.csv"):
         """Save the results to a CSV file."""
-        fieldnames = ["repo_name", "team", "priority", "ci_tool", "cd_tool", "version_plan", "contact", "notes"]
+        fieldnames = ["repo_name", "team", "priority", "ci_tool", "cd_tool", "version_plan", "contact", "notes", "test_framework", "test_coverage"]
         
         with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -413,6 +435,36 @@ class CICDAnalyzer:
                 print(f"   - {repo}")
             if len(no_cd) > 5:
                 print(f"   ... and {len(no_cd) - 5} more")
+        
+        # Show test framework summary if tests were run
+        if any(r.get('test_framework') for r in results):
+            test_frameworks = {}
+            total_coverage = 0
+            coverage_count = 0
+            
+            for result in results:
+                framework = result.get('test_framework')
+                if framework:
+                    test_frameworks[framework] = test_frameworks.get(framework, 0) + 1
+                    coverage = result.get('test_coverage', 0)
+                    if coverage > 0:
+                        total_coverage += coverage
+                        coverage_count += 1
+            
+            print(f"\n🧪 Test Framework Distribution:")
+            for framework, count in sorted(test_frameworks.items(), key=lambda x: x[1], reverse=True):
+                print(f"   {framework}: {count}")
+            
+            if coverage_count > 0:
+                avg_coverage = total_coverage / coverage_count
+                print(f"\n📊 Average Test Coverage: {avg_coverage:.1f}% ({coverage_count} repositories)")
+            
+            # Show repositories with high coverage
+            high_coverage = [r for r in results if r.get('test_coverage', 0) > 80]
+            if high_coverage:
+                print(f"\n🎯 High Coverage Repositories (>80%):")
+                for repo in high_coverage[:5]:
+                    print(f"   - {repo['repo_name']}: {repo['test_coverage']:.1f}%")
 
 
 def main():
@@ -423,6 +475,7 @@ def main():
     parser.add_argument('--output', default='cicd-report.csv', help='Output CSV file (default: cicd-report.csv)')
     parser.add_argument('--git-host', default='bitbucket.org', help='Git host (default: bitbucket.org)')
     parser.add_argument('--org-name', help='Organization/user name for repositories')
+    parser.add_argument('--run-tests', action='store_true', help='Run test suites and collect coverage data')
     
     args = parser.parse_args()
     
@@ -430,7 +483,8 @@ def main():
         repos_dir=args.repos_dir,
         repos_csv=args.repos_csv,
         git_host=args.git_host,
-        org_name=args.org_name
+        org_name=args.org_name,
+        run_tests=args.run_tests
     )
     
     print("🔍 CI/CD Detector")
